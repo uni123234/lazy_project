@@ -1,6 +1,6 @@
 import os
 import sys
-from settings import create_project_files, get_admin_data
+from .settings import create_project_files, get_admin_data
 
 
 def main():

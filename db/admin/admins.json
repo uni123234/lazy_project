@@ -20,11 +20,22 @@
         {
             "id": 3,
             "technology": "flask",
-            "main_content": "\nfrom flask import Flask\n\napp = Flask(__name__)\n\n@app.route('/')\ndef hello_world():\n    return 'Hello, Flask World!'\n",
-            "run_content": "\nif __name__ == '__main__':\n    app.run(debug=True)\n",
-            "requirements": "\nflask\n",
-            ".gitignore": "\n*.pyc\n__pycache__\n.env\n",
-            "Readme": "\n## Flask Example\n\nThis project contains a basic Flask application.\n\n### Usage\n\n1. Create a project folder.\n2. Create a file named `app.py` and paste the code from `admins_data3[\"main_content\"]`.\n3. Create a file named `requirements.txt` and add `flask`.\n4. Install the dependencies using `pip install -r requirements.txt`.\n5. Run the application using the command `python app.py`.\n\n### Additional Information\n\n* Flask documentation: https://flask.palletsprojects.com/en/2.0.x/\n"
+            "files": [
+                {
+                    "parent": {},
+                    "name": "main.py",
+                    "content": "\nfrom flask import Flask\n\napp = Flask(__name__)\n\n@app.route('/')\ndef hello_world():\n    return 'Hello, Flask World!'\n"
+                },
+                {
+                    "name": "run.py"
+                    // ....
+                }
+            ]
+            // "main_content": "\nfrom flask import Flask\n\napp = Flask(__name__)\n\n@app.route('/')\ndef hello_world():\n    return 'Hello, Flask World!'\n",
+            // "run_content": "\nif __name__ == '__main__':\n    app.run(debug=True)\n",
+            // "requirements": "\nflask\n",
+            // ".gitignore": "\n*.pyc\n__pycache__\n.env\n",
+            // "Readme": "\n## Flask Example\n\nThis project contains a basic Flask application.\n\n### Usage\n\n1. Create a project folder.\n2. Create a file named `app.py` and paste the code from `admins_data3[\"main_content\"]`.\n3. Create a file named `requirements.txt` and add `flask`.\n4. Install the dependencies using `pip install -r requirements.txt`.\n5. Run the application using the command `python app.py`.\n\n### Additional Information\n\n* Flask documentation: https://flask.palletsprojects.com/en/2.0.x/\n"
         }
     ]
 }

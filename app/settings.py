@@ -1,6 +1,8 @@
 import json
 import os
-from .db.admin import admins
+
+# from .db.admin import admins
+
 
 def write_to_json(file_path, data):
     """
@@ -27,7 +29,7 @@ def get_admin_data(technology):
     Returns:
         dict: Admin data for the specified technology.
     """
-    with open("admins.json", "r", encoding="utf-8") as f:
+    with open("db/admin/admins.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         admins = data.get("admins", [])
         for admin in admins:
@@ -54,12 +56,15 @@ def create_project_files(project_dir, project_name, admin_data):
     os.makedirs(project_path, exist_ok=True)
 
     tech = admin_data["technology"]
-    tech_path = os.path.join(project_path, ".json", tech)
-    os.makedirs(tech_path, exist_ok=True)
 
+    tech_path = os.path.join(project_path, tech)
+
+    os.makedirs(tech_path, exist_ok=True)
+    exclude = ["id", "technology"]
     for file_name, content in admin_data.items():
+        print(file_name)
         if file_name != "technology":
-            file_path = os.path.join(tech_path, file_name + ".json")
+            file_path = os.path.join(tech_path, file_name + ".py")
             write_to_json(file_path, content)
 
     print(
