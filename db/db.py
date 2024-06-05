@@ -1,6 +1,6 @@
 import json
 import os
-from ..app import create_project_files
+from settings import create_project_files
 
 
 def write_to_json(file_path, data):
