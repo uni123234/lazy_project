@@ -1,1 +1,2 @@
-from settings import create_project_files
+from . import settings
+from . import snips
