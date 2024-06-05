@@ -1,25 +1,22 @@
-import bson
+import json
 import os
 
-admins_file_path = "db/admin/admins.bson"
-users_file_path = "db/user/users.bson"
+admins_file_path = "db/admin/admins.json"
+users_file_path = "db/user/users.json"
 
-
-def write_to_bson(file_path, data):
+def write_to_json(file_path, data):
     """
-    Function to write data to a BSON file.
+    Function to write data to a JSON file.
 
     Args:
-        file_path (str): Path to the BSON file.
+        file_path (str): Path to the JSON file.
         data (dict): Data to write.
 
     Returns:
         None.
     """
-    with open(file_path, "wb") as file:
-        bson_data = bson.BSON.encode(data)
-        file.write(bson_data)
-
+    with open(file_path, "w", encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
 admins_data = {
     "main_content": """
@@ -50,7 +47,7 @@ uvicorn
 __pycache__
 .env
 """,
-    "readme": """
+    "Readme": """
 ## FastAPI API Example
 
 This project contains a basic FastAPI API with two endpoints:
@@ -70,10 +67,10 @@ This project contains a basic FastAPI API with two endpoints:
 
 * FastAPI documentation: https://fastapi.tiangolo.com/tutorial/first-steps/
 * How to write a FastAPI API: https://www.youtube.com/watch?v=SORiTsvnU28
-""",
+"""
 }
 
-write_to_bson(admins_file_path, admins_data)
+write_to_json(admins_file_path, admins_data)
 
 users_content = {"command": "fastapi_quick"}
-write_to_bson(users_file_path, users_content)
+write_to_json(users_file_path, users_content)
