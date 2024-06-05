@@ -1,6 +1,6 @@
-import os
 import json
-
+import os
+from .db.admin import admins
 
 def write_to_json(file_path, data):
     """
@@ -17,14 +17,33 @@ def write_to_json(file_path, data):
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
-def create_project_files(project_dir, project_name, admins_data):
+def get_admin_data(technology):
+    """
+    Get admin data for a specific technology.
+
+    Args:
+        technology (str): The technology for which to retrieve admin data.
+
+    Returns:
+        dict: Admin data for the specified technology.
+    """
+    with open("admins.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+        admins = data.get("admins", [])
+        for admin in admins:
+            if admin["technology"] == technology:
+                return admin
+        return None
+
+
+def create_project_files(project_dir, project_name, admin_data):
     """
     Creates the necessary project files based on the specified technology in the project directory.
 
     Args:
         project_dir (str): The absolute path to the project directory.
         project_name (str): The name of the project to create.
-        admins_data (list): List of dictionaries containing admin data for each technology.
+        admin_data (dict): Dictionary containing admin data for the technology.
 
     Returns:
         None.
@@ -34,15 +53,14 @@ def create_project_files(project_dir, project_name, admins_data):
     project_path = os.path.join(project_dir, project_name)
     os.makedirs(project_path, exist_ok=True)
 
-    for admin_data in admins_data:
-        tech = admin_data["technology"]
-        tech_path = os.path.join(project_path, "db", tech)
-        os.makedirs(tech_path, exist_ok=True)
+    tech = admin_data["technology"]
+    tech_path = os.path.join(project_path, ".json", tech)
+    os.makedirs(tech_path, exist_ok=True)
 
-        for file_name, content in admin_data.items():
-            if file_name != "technology":
-                file_path = os.path.join(tech_path, file_name + ".json")
-                write_to_json(file_path, content)
+    for file_name, content in admin_data.items():
+        if file_name != "technology":
+            file_path = os.path.join(tech_path, file_name + ".json")
+            write_to_json(file_path, content)
 
     print(
         f"Project '{project_name}' created successfully in directory '{project_dir}'!"

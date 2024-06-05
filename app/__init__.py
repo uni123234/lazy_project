@@ -1,2 +1,2 @@
-from . import settings
 from . import snips
+from . import settings

@@ -1,7 +1,6 @@
 import os
 import sys
-import json
-from settings import create_project
+from settings import create_project_files, get_admin_data
 
 
 def main():
@@ -26,27 +25,33 @@ def main():
         print(f"Error: Project directory '{project_dir}' does not exist.")
         return 1
 
+    if len(sys.argv) < 4:
+        print("Error: Please provide a project name.")
+        return 1
+
+    project_name = sys.argv[3]
+
     # Handle specific commands
     if sys.argv[1] == "fastapi_quick":
-        if len(sys.argv) < 4:
-            print("Error: Please provide a project name.")
-            return 1
-        project_name = sys.argv[3]
-        create_project(project_dir, project_name, "fastapi")
+        admin_data = get_admin_data("fastapi")
+        if admin_data:
+            create_project_files(project_dir, project_name, admin_data)
+        else:
+            print("Error: Admin data not found for fastapi.")
 
     elif sys.argv[1] == "aiogram_quick":
-        if len(sys.argv) < 4:
-            print("Error: Please provide a project name.")
-            return 1
-        project_name = sys.argv[3]
-        create_project(project_dir, project_name, "aiogram")
+        admin_data = get_admin_data("aiogram")
+        if admin_data:
+            create_project_files(project_dir, project_name, admin_data)
+        else:
+            print("Error: Admin data not found for aiogram.")
 
     elif sys.argv[1] == "flask_quick":
-        if len(sys.argv) < 4:
-            print("Error: Please provide a project name.")
-            return 1
-        project_name = sys.argv[3]
-        create_project(project_dir, project_name, "flask")
+        admin_data = get_admin_data("flask")
+        if admin_data:
+            create_project_files(project_dir, project_name, admin_data)
+        else:
+            print("Error: Admin data not found for flask.")
 
 
 if __name__ == "__main__":
