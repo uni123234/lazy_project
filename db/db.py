@@ -1,8 +1,7 @@
 import json
 import os
+from ..app import create_project_files
 
-admins_file_path = "db/admin/admins.json"
-users_file_path = "db/user/users.json"
 
 def write_to_json(file_path, data):
     """
@@ -15,62 +14,44 @@ def write_to_json(file_path, data):
     Returns:
         None.
     """
-    with open(file_path, "w", encoding='utf-8') as file:
+    with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
-admins_data = {
-    "main_content": """
-from fastapi import FastAPI
 
-app = FastAPI()
+def get_admin_data(technology):
+    """
+    Get admin data for a specific technology.
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+    Args:
+        technology (str): The technology for which to retrieve admin data.
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
-""",
-    "run_content": """
-import uvicorn
+    Returns:
+        dict: Admin data for the specified technology.
+    """
+    with open("db.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+        admins = data.get("admins", [])
+        for admin in admins:
+            if admin["technology"] == technology:
+                return admin
+        return None
 
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
-""",
-    "requirements": """
-fastapi
-uvicorn
-""",
-    ".gitignore": """
-*.pyc
-__pycache__
-.env
-""",
-    "Readme": """
-## FastAPI API Example
 
-This project contains a basic FastAPI API with two endpoints:
+# Command: fastapi_quick
+admins_data = get_admin_data("fastapi")
+if admins_data:
+    create_project_files("project_dir", "project_name", [admins_data])
 
-* `"/"`: Returns a JSON object with the text "Hello": "World".
-* `"/items/{item_id}"`: Takes an `item_id` parameter (integer) and returns a JSON object with the `item_id` and an optional `q` parameter (string).
+# Command: aiogram_quick
+admins_data = get_admin_data("aiogram")
+if admins_data:
+    create_project_files("project_dir", "project_name", [admins_data])
 
-### Usage
+# Command: flask_quick
+admins_data = get_admin_data("flask")
+if admins_data:
+    create_project_files("project_dir", "project_name", [admins_data])
 
-1. Create a project folder.
-2. Create a file named `main.py` and paste the code from `admins_data["main_content"]`.
-3. Create a file named `requirements.txt` and add `fastapi uvicorn`.
-4. Install the dependencies using `pip install -r requirements.txt`.
-5. Run the API using the command `uvicorn main:app --host=127.0.0.1 --port=8000`.
-
-### Additional Information
-
-* FastAPI documentation: https://fastapi.tiangolo.com/tutorial/first-steps/
-* How to write a FastAPI API: https://www.youtube.com/watch?v=SORiTsvnU28
-"""
-}
-
-write_to_json(admins_file_path, admins_data)
-
-users_content = {"command": "fastapi_quick"}
-write_to_json(users_file_path, users_content)
+# Command for users.json
+users_content = {"commands": ["fastapi_quick", "aiogram_quick", "flask_quick"]}
+write_to_json("db/user/users.json", users_content)
