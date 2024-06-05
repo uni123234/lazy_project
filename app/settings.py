@@ -31,7 +31,7 @@ def get_admin_data(technology):
     """
     with open("db/admin/admins.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        admins = data.get("admins", [])
+        admins = data.get("projects", [])
         for admin in admins:
             if admin["technology"] == technology:
                 return admin
@@ -50,23 +50,17 @@ def create_project_files(project_dir, project_name, admin_data):
     Returns:
         None.
     """
-
     # Create project directory
     project_path = os.path.join(project_dir, project_name)
     os.makedirs(project_path, exist_ok=True)
 
     tech = admin_data["technology"]
-
     tech_path = os.path.join(project_path, tech)
-
     os.makedirs(tech_path, exist_ok=True)
-    exclude = ["id", "technology"]
-    for file_name, content in admin_data.items():
-        print(file_name)
-        if file_name != "technology":
-            file_path = os.path.join(tech_path, file_name + ".py")
-            write_to_json(file_path, content)
 
-    print(
-        f"Project '{project_name}' created successfully in directory '{project_dir}'!"
-    )
+    for file_info in admin_data["files"]:
+        file_path = os.path.join(tech_path, file_info["name"])
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(file_info["content"])
+
+    print(f"Project '{project_name}' created successfully in directory '{project_dir}'!")

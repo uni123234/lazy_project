@@ -30,28 +30,35 @@ def get_admin_data(technology):
     """
     with open("admins.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        admins = data.get("admins", [])
-        for admin in admins:
-            if admin["technology"] == technology:
-                return admin
+        projects = data.get("projects", [])
+        for project in projects:
+            if project["technology"] == technology:
+                return project
         return None
 
 
-# Command: fastapi_quick
-admins_data = get_admin_data("fastapi")
-if admins_data:
-    create_project_files("project_dir", "project_name", admins_data)
+def create_and_run_project(technology, project_dir, project_name):
+    """
+    Create and run project files for the specified technology.
 
-# Command: aiogram_quick
-admins_data = get_admin_data("aiogram")
-if admins_data:
-    create_project_files("project_dir", "project_name", admins_data)
+    Args:
+        technology (str): The technology for which to create project files.
+        project_dir (str): Directory where the project will be created.
+        project_name (str): Name of the project.
 
-# Command: flask_quick
-admins_data = get_admin_data("flask")
-if admins_data:
-    create_project_files("project_dir", "project_name", admins_data)
+    Returns:
+        None.
+    """
+    project_data = get_admin_data(technology)
+    if project_data:
+        create_project_files(project_dir, project_name, project_data)
 
-# Command for users.json
+
+# Create and run projects for each technology
+create_and_run_project("fastapi", "fastapi_project_dir", "fastapi_project")
+create_and_run_project("aiogram", "aiogram_project_dir", "aiogram_project")
+create_and_run_project("flask", "flask_project_dir", "flask_project")
+
+# Write commands to users.json
 users_content = {"commands": ["fastapi_quick", "aiogram_quick", "flask_quick"]}
 write_to_json("db/user/users.json", users_content)
