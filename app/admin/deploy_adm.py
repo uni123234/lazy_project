@@ -27,7 +27,7 @@ def get_admin_data(technology):
     Returns:
         dict: Admin data for the specified technology.
     """
-    with open("admins.json", "r", encoding="utf-8") as f:
+    with open("db/admin/admins.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         projects = data.get("projects", [])
         for project in projects:
@@ -52,7 +52,7 @@ def create_project_files(project_dir, project_name, admin_data):
     os.makedirs(project_path, exist_ok=True)
 
     tech = admin_data["technology"]
-    tech_path = os.path.join(project_path, tech)
+    tech_path = project_path  # os.path.join(project_path, tech)
     os.makedirs(tech_path, exist_ok=True)
 
     for file_info in admin_data["files"]:
@@ -67,20 +67,22 @@ def create_project_files(project_dir, project_name, admin_data):
         with open(file_path, "w", encoding="utf-8") as file:
             file.write(file_info["content"])
 
-    print(f"Project '{project_name}' created successfully in directory '{project_dir}'!")
+    print(
+        f"Project '{project_name}' created successfully in directory '{project_dir}'!"
+    )
 
 
 def add_remove_code_image(project_dir, technology, action):
     """
     Add or remove code files from the project.
     """
+    # TODO: ??????
     project_code_dir = os.path.join(project_dir, technology, "db")
     os.makedirs(project_code_dir, exist_ok=True)
 
     admin_data = get_admin_data(technology)
     if not admin_data:
-        print(f"Error: Admin data not found for {technology}.")
-        return
+        raise NotImplementedError(f"Admin data not found for {technology}.")
 
     if action == "add":
         for file_info in admin_data["files"]:
