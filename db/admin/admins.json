@@ -14,7 +14,7 @@
                 },
                 {
                     "name": "requirements.txt",
-                    "content": "\nfastapi\nuvicorn\n"
+                    "content": "\nfastapi\nuvicorn\nsqlalchemy\n"
                 },
                 {
                     "name": ".gitignore",
@@ -22,7 +22,11 @@
                 },
                 {
                     "name": "Readme.md",
-                    "content": "\n## FastAPI API Example\n\nThis project contains a basic FastAPI API with two endpoints:\n\n* `\"/\"`: Returns a JSON object with the text \"Hello\": \"World\".\n* `\"/items/{item_id}\"`: Takes an `item_id` parameter (integer) and returns a JSON object with the `item_id` and an optional `q` parameter (string).\n\n### Usage\n\n1. Create a project folder.\n2. Create a file named `main.py` and paste the code from `main.py`.\n3. Create a file named `requirements.txt` and add `fastapi uvicorn`.\n4. Install the dependencies using `pip install -r requirements.txt`.\n5. Run the API using the command `uvicorn main:app --host=127.0.0.1 --port=8000`.\n\n### Additional Information\n\n* FastAPI documentation: https://fastapi.tiangolo.com/tutorial/first-steps/\n* How to write a FastAPI API: https://www.youtube.com/watch?v=SORiTsvnU28\n"
+                    "content": "\n## FastAPI API Example\n\nThis project contains a basic FastAPI API with two endpoints:\n\n* `\"/\"`: Returns a JSON object with the text \"Hello\": \"World\".\n* `\"/items/{item_id}\"`: Takes an `item_id` parameter (integer) and returns a JSON object with the `item_id` and an optional `q` parameter (string).\n\n### Usage\n\n1. Create a project folder.\n2. Create a file named `main.py` and paste the code from `main.py`.\n3. Create a file named `requirements.txt` and add `fastapi uvicorn sqlalchemy`.\n4. Install the dependencies using `pip install -r requirements.txt`.\n5. Run the API using the command `uvicorn main:app --host=127.0.0.1 --port=8000`.\n\n### Additional Information\n\n* FastAPI documentation: https://fastapi.tiangolo.com/tutorial/first-steps/\n* How to write a FastAPI API: https://www.youtube.com/watch?v=SORiTsvnU28\n"
+                },
+                {
+                    "name": "db.py",
+                    "content": "\nfrom sqlalchemy import create_engine, Column, Integer, String\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom sqlalchemy.orm import sessionmaker\n\nDATABASE_URL = \"sqlite:///./test.db\"\n\nengine = create_engine(DATABASE_URL)\nSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)\n\nBase = declarative_base()\n\nclass Item(Base):\n    __tablename__ = \"items\"\n    id = Column(Integer, primary_key=True, index=True)\n    name = Column(String, index=True)\n\nBase.metadata.create_all(bind=engine)\n"
                 }
             ]
         },
@@ -36,7 +40,7 @@
                 },
                 {
                     "name": "requirements.txt",
-                    "content": "\naiogram\n"
+                    "content": "\naiogram\nsqlalchemy\n"
                 },
                 {
                     "name": ".gitignore",
@@ -44,7 +48,11 @@
                 },
                 {
                     "name": "Readme.md",
-                    "content": "\n## aiogram Bot Example\n\nThis project contains a basic aiogram Bot example.\n\n### Usage\n\n1. Create a project folder.\n2. Create a file named `bot.py` and paste the code from `bot.py`.\n3. Create a file named `requirements.txt` and add `aiogram`.\n4. Install the dependencies using `pip install -r requirements.txt`.\n5. Run the bot using the command `python bot.py`.\n\n### Additional Information\n\n* aiogram documentation: https://docs.aiogram.dev/en/latest/\n"
+                    "content": "\n## aiogram Bot Example\n\nThis project contains a basic aiogram Bot example.\n\n### Usage\n\n1. Create a project folder.\n2. Create a file named `bot.py` and paste the code from `bot.py`.\n3. Create a file named `requirements.txt` and add `aiogram sqlalchemy`.\n4. Install the dependencies using `pip install -r requirements.txt`.\n5. Run the bot using the command `python bot.py`.\n\n### Additional Information\n\n* aiogram documentation: https://docs.aiogram.dev/en/latest/\n"
+                },
+                {
+                    "name": "db.py",
+                    "content": "\nfrom sqlalchemy import create_engine, Column, Integer, String\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom sqlalchemy.orm import sessionmaker\n\nDATABASE_URL = \"sqlite:///./test.db\"\n\nengine = create_engine(DATABASE_URL)\nSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)\n\nBase = declarative_base()\n\nclass Item(Base):\n    __tablename__ = \"items\"\n    id = Column(Integer, primary_key=True, index=True)\n    name = Column(String, index=True)\n\nBase.metadata.create_all(bind=engine)\n"
                 }
             ]
         },
@@ -62,7 +70,7 @@
                 },
                 {
                     "name": "requirements.txt",
-                    "content": "\nflask\n"
+                    "content": "\nflask\nsqlalchemy\n"
                 },
                 {
                     "name": ".gitignore",
@@ -70,7 +78,11 @@
                 },
                 {
                     "name": "Readme.md",
-                    "content": "\n## Flask Example\n\nThis project contains a basic Flask application.\n\n### Usage\n\n1. Create a project folder.\n2. Create a file named `main.py` and paste the code from `main.py`.\n3. Create a file named `requirements.txt` and add `flask`.\n4. Install the dependencies using `pip install -r requirements.txt`.\n5. Run the application using the command `python main.py`.\n\n### Additional Information\n\n* Flask documentation: https://flask.palletsprojects.com/en/2.0.x/\n"
+                    "content": "\n## Flask Example\n\nThis project contains a basic Flask application.\n\n### Usage\n\n1. Create a project folder.\n2. Create a file named `main.py` and paste the code from `main.py`.\n3. Create a file named `requirements.txt` and add `flask sqlalchemy`.\n4. Install the dependencies using `pip install -r requirements.txt`.\n5. Run the application using the command `python main.py`.\n\n### Additional Information\n\n* Flask documentation: https://flask.palletsprojects.com/en/2.0.x/\n"
+                },
+                {
+                    "name": "db.py",
+                    "content": "\nfrom sqlalchemy import create_engine, Column, Integer, String\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom sqlalchemy.orm import sessionmaker\n\nDATABASE_URL = \"sqlite:///./test.db\"\n\nengine = create_engine(DATABASE_URL)\nSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)\n\nBase = declarative_base()\n\nclass Item(Base):\n    __tablename__ = \"items\"\n    id = Column(Integer, primary_key=True, index=True)\n    name = Column(String, index=True)\n\nBase.metadata.create_all(bind=engine)\n"
                 }
             ]
         }

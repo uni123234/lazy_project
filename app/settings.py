@@ -1,8 +1,6 @@
 import json
 import os
 
-# from .db.admin import admins
-
 
 def write_to_json(file_path, data):
     """
