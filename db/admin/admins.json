@@ -3,6 +3,38 @@
         {
             "id": 1,
             "technology": "fastapi",
+            "project_tree": [
+                {
+                    "name": "db",
+                    "is_folder": true,
+                    "content": null,
+                    "children": [
+                        {
+                            "name": "db.py",
+                            "is_folder": false,
+                            "content": "\nfrom sqlalchemy import create_engine, Column, Integer, String\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom sqlalchemy.orm import sessionmaker\n\nDATABASE_URL = \"sqlite:///./test.db\"\n\nengine = create_engine(DATABASE_URL)\nSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)\n\nBase = declarative_base()\n\nclass Item(Base):\n    __tablename__ = \"items\"\n    id = Column(Integer, primary_key=True, index=True)\n    name = Column(String, index=True)\n\nBase.metadata.create_all(bind=engine)\n"
+                        },
+                        {
+                            "name": "__init__.py",
+                            "is_folder": false,
+                            "content": "from .db import SessionLocal, Base, Item"
+                        },
+                        {
+                            "name": "models",
+                            "is_folder": true,
+                            "content":null,
+                            "children": [
+                                {
+                                    "name": "MyFuckingModel.py",
+                                    "is_folder": false,
+                                    "content": "from .db import SessionLocal, Base, Item"
+                                }
+                            ]
+                        }
+                    ]
+        
+                }
+            ],
             "files": [
                 {
                     "name": "main.py",
