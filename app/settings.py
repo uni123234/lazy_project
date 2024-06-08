@@ -56,9 +56,41 @@ def create_project_files(project_dir, project_name, admin_data):
     tech_path = os.path.join(project_path, tech)
     os.makedirs(tech_path, exist_ok=True)
 
-    for file_info in admin_data["files"]:
-        file_path = os.path.join(tech_path, file_info["name"])
-        with open(file_path, "w", encoding="utf-8") as file:
-            file.write(file_info["content"])
+    for file_info in admin_data["project_tree"]:
+        if file_info.get("children"):
+            create_nested_files(tech_path, file_info)
+        else:
+            file_name = file_info["name"]
+            file_content = file_info.get("content", "")
+            file_path = os.path.join(tech_path, file_name)
+            with open(file_path, "w", encoding="utf-8") as file:
+                file.write(file_content)
 
-    print(f"Project '{project_name}' created successfully in directory '{project_dir}'!")
+    print(
+        f"Project '{project_name}' created successfully in directory '{project_dir}'!"
+    )
+
+
+def create_nested_files(parent_path, file_info):
+    """
+    Creates nested files and directories recursively.
+
+    Args:
+        parent_path (str): The absolute path to the parent directory.
+        file_info (dict): Information about the file or directory.
+
+    Returns:
+        None.
+    """
+    if file_info.get("children"):
+        dir_name = file_info["name"]
+        dir_path = os.path.join(parent_path, dir_name)
+        os.makedirs(dir_path, exist_ok=True)
+        for child_info in file_info["children"]:
+            create_nested_files(dir_path, child_info)
+    else:
+        file_name = file_info["name"]
+        file_content = file_info.get("content", "")
+        file_path = os.path.join(parent_path, file_name)
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(file_content)

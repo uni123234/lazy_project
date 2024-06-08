@@ -29,10 +29,10 @@ def get_admin_data(technology):
     """
     with open("db/admin/admins.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        projects = data.get("projects", [])
-        for project in projects:
-            if project["technology"] == technology:
-                return project
+        admins = data.get("projects", [])
+        for admin in admins:
+            if admin["technology"] == technology:
+                return admin
         return None
 
 
@@ -48,74 +48,62 @@ def create_project_files(project_dir, project_name, admin_data):
     Returns:
         None.
     """
+    # Create project directory
     project_path = os.path.join(project_dir, project_name)
     os.makedirs(project_path, exist_ok=True)
 
     tech = admin_data["technology"]
-    tech_path = project_path  # os.path.join(project_path, tech)
+    tech_path = os.path.join(project_path, tech)
     os.makedirs(tech_path, exist_ok=True)
 
-    for file_info in admin_data["files"]:
-        file_subdir, file_name = os.path.split(file_info["name"])
-        if file_subdir:
-            subdir_path = os.path.join(tech_path, file_subdir)
-            os.makedirs(subdir_path, exist_ok=True)
-            file_path = os.path.join(subdir_path, file_name)
-        else:
-            file_path = os.path.join(tech_path, file_name)
+    # Add .gitignore content to project_tree
+    project_tree = admin_data.get("project_tree", [])
+    project_tree.append(
+        {
+            "name": ".gitignore",
+            "is_folder": False,
+            "content": admin_data.get(".gitignore", ""),
+        }
+    )
 
-        with open(file_path, "w", encoding="utf-8") as file:
-            file.write(file_info["content"])
+    for file_info in project_tree:
+        if file_info.get("children"):
+            create_nested_files(tech_path, file_info)
+        else:
+            file_name = file_info["name"]
+            file_content = file_info.get("content", "")
+            file_path = os.path.join(tech_path, file_name)
+            with open(file_path, "w", encoding="utf-8") as file:
+                file.write(file_content)
 
     print(
         f"Project '{project_name}' created successfully in directory '{project_dir}'!"
     )
 
 
-def add_remove_code_image(project_dir, technology, action):
+def create_nested_files(parent_path, file_info):
     """
-    Add or remove code files from the project.
+    Creates nested files and directories recursively.
+
+    Args:
+        parent_path (str): The absolute path to the parent directory.
+        file_info (dict): Information about the file or directory.
+
+    Returns:
+        None.
     """
-    # TODO: ??????
-    project_code_dir = os.path.join(project_dir, technology, "db")
-    os.makedirs(project_code_dir, exist_ok=True)
-
-    admin_data = get_admin_data(technology)
-    if not admin_data:
-        raise NotImplementedError(f"Admin data not found for {technology}.")
-
-    if action == "add":
-        for file_info in admin_data["files"]:
-            file_subdir, file_name = os.path.split(file_info["name"])
-            if file_subdir == "db":
-                file_path = os.path.join(project_code_dir, file_name)
-                with open(file_path, "w", encoding="utf-8") as file:
-                    file.write(file_info["content"])
-                print(f"Code file '{file_name}' added successfully.")
-    elif action == "remove":
-        for file_info in admin_data["files"]:
-            file_subdir, file_name = os.path.split(file_info["name"])
-            if file_subdir == "db":
-                file_path = os.path.join(project_code_dir, file_name)
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                    print(f"Code file '{file_name}' removed successfully.")
-                else:
-                    print(f"Error: Code file '{file_name}' not found.")
+    if file_info.get("children"):
+        dir_name = file_info["name"]
+        dir_path = os.path.join(parent_path, dir_name)
+        os.makedirs(dir_path, exist_ok=True)
+        for child_info in file_info["children"]:
+            create_nested_files(dir_path, child_info)
     else:
-        print("Error: Invalid action. Please use 'add' or 'remove'.")
-
-
-def edit_code_image(project_dir, technology, code_file, new_content):
-    """
-    Edit a code file in the project.
-    """
-    project_code_dir = os.path.join(project_dir, technology, "db")
-    file_path = os.path.join(project_code_dir, code_file)
-
-    if os.path.exists(file_path):
+        file_name = file_info["name"]
+        file_content = file_info.get("content", "")  # Provide default empty string
+        if file_content is None:
+            file_content = ""  # Ensure file_content is a string
+        file_path = os.path.join(parent_path, file_name)
         with open(file_path, "w", encoding="utf-8") as file:
-            file.write(new_content)
-        print(f"Code file '{code_file}' edited successfully.")
-    else:
-        print(f"Error: Code file '{code_file}' not found.")
+            file.write(file_content)
+
