@@ -1,62 +1,51 @@
-from enum import StrEnum
 import os
-import sys
 import json
-from .admin.deploy_adm import create_project_files, get_admin_data
 
 
-class TemplateCommands(StrEnum):
-    # TEMPLATE COMMANDS
-    FASTAPI: str = "fastapi_quick"
-    AIOGRAM: str = "aiogram_quick"
-    FLASK: str = "flask_quick"
+ADMINS_FILE_PATH = "db/admin/admins.json"
 
 
-class Root(StrEnum):
-    serialize: str = "serialize_template"
-    update: str = "update_template"
-    delete: str = "delete_template"
-    deserialize: str = "deserialize_template"
-
-
-AVAILABLE_TEMPLATES = list(TemplateCommands.__members__.values())
-AVAILABLE_COMMANDS = list(Root.__members__.values())
-
-TEMPLATES_FILE_PATH = "db/admin/templates.json"
+def write_to_json(file_path, data):
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
 
 def read_from_json(file_path):
-    if os.path.exists(file_path):
-        with open(file_path, "r", encoding="utf-8") as file:
-            return json.load(file)
-    return {"projects": []}
+    with open(file_path, "r", encoding="utf-8") as file:
+        data = json.load(file)
+    return data
 
 
-def main():
-    if len(sys.argv) < 4:
-        print("Usage: python main.py <command> <project_directory> <project_name>")
-        print("Available commands:", ", ".join(AVAILABLE_COMMANDS))
-        print("Available templates:", ", ".join(AVAILABLE_TEMPLATES))
-        return 1
+def create_project_files(project_dir, project_name, project_tree):
+    project_path = os.path.join(project_dir, project_name)
+    os.makedirs(project_path, exist_ok=True)
 
-    _root, command, project_dir, project_name, *c = sys.argv
-    if not os.path.isdir(project_dir):
-        raise NotImplementedError(f"Project directory '{project_dir}' does not exist.")
-    if command not in AVAILABLE_TEMPLATES:
-        print("Available commands:", ",".join(AVAILABLE_COMMANDS))
-        print("Usage: python main.py <command> <project_directory> <templates_name>")
-        print("Available templates:", ", ".join(AVAILABLE_TEMPLATES))
-        return 1
+    for item in project_tree:
+        item_name = item["name"]
+        item_path = os.path.join(project_path, item_name)
+        if item.get("is_folder"):
+            os.makedirs(item_path, exist_ok=True)
+            children = item.get("children", [])
+            if children:
+                create_project_files(project_path, item_name, children)
+        else:
+            content = item.get("content")  
+            if content is not None:  
+                with open(item_path, "w", encoding="utf-8") as file:
+                    file.write(content)
+            else:
+                print(f"Error: Content is None for item {item_name}")
 
-    technology, specifier = project_name.split("_")
-
-    admin_data = get_admin_data(technology)
-    if admin_data:
-        create_project_files(project_dir, project_name, admin_data)
-    else:
-        print(f"Error: Admin data not found for {technology}.")
-        return 1
+    print(
+        f"Project '{project_name}' created successfully in directory '{project_dir}'!"
+    )
 
 
-if __name__ == "__main__":
-    exit(main())
+
+def get_admin_data(technology):
+    admin_data = read_from_json(ADMINS_FILE_PATH)
+    projects = admin_data.get("projects", [])
+    for project in projects:
+        if project["technology"] == technology:
+            return project
+    return None
