@@ -2,11 +2,13 @@ import os
 import json
 
 
+# FIXME: DRY, DO NOT FUGGING REPEAT
 def write_to_json(file_path, data):
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
+# TODO: add annotations
 def get_admin_data(technology):
     with open("db/admin/admins.json", "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -17,6 +19,8 @@ def get_admin_data(technology):
         return None
 
 
+# TODO: add annotations
+# BUG: WTF DOES IT RETURNS?
 def create_project_files(project_dir, project_name, admin_data):
     project_path = os.path.join(project_dir, project_name)
     os.makedirs(project_path, exist_ok=True)
@@ -49,6 +53,8 @@ def create_project_files(project_dir, project_name, admin_data):
     )
 
 
+# TODO: add annotations
+# BUG: WTF DOES IT RETURNS?
 def create_nested_files(parent_path, file_info):
     if file_info.get("children"):
         dir_name = file_info["name"]

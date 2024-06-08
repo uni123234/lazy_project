@@ -5,6 +5,7 @@ import json
 ADMINS_FILE_PATH = "db/admin/admins.json"
 
 
+# FIXME: settings for settings, utils to utils
 def write_to_json(file_path, data):
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
@@ -48,3 +49,6 @@ def get_admin_data(technology):
         if project["technology"] == technology:
             return project
     return None
+
+
+# ~!

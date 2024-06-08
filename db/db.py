@@ -2,11 +2,13 @@ import os
 import json
 
 
+# FIXME: DRY
 def write_to_json(file_path, data):
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
+# FIXME: DRY
 def get_admin_data(technology):
     with open("admins.json", "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -17,6 +19,7 @@ def get_admin_data(technology):
         return None
 
 
+# FIXME: DRY
 def create_project_files(project_dir, project_name, admin_data):
     project_path = os.path.join(project_dir, project_name)
     os.makedirs(project_path, exist_ok=True)
@@ -35,6 +38,8 @@ def create_project_files(project_dir, project_name, admin_data):
     )
 
 
+# FIXME: What does it returns?
+# BUG: Prints must be only inside main fugging function
 def add_code_file(project_dir, technology, file_name, content):
     tech_path = os.path.join(project_dir, technology)
     os.makedirs(tech_path, exist_ok=True)
@@ -69,12 +74,14 @@ def edit_code_file(project_dir, technology, file_name, new_content):
         print(f"Error: Code file '{file_name}' not found in '{technology}' project.")
 
 
+# FIXME: MEDAITOR ALERT!!!
 def create_and_run_project(technology, project_dir, project_name):
     project_data = get_admin_data(technology)
     if project_data:
         create_project_files(project_dir, project_name, project_data)
 
 
+# FIXME: MEDAITOR ALERT!!!
 def validate_commands(commands, valid_technologies):
     valid_commands = [
         cmd for cmd in commands if cmd.split("_")[0] in valid_technologies
@@ -82,6 +89,7 @@ def validate_commands(commands, valid_technologies):
     return valid_commands
 
 
+# FIXME: second main??? Use tests or checkings
 def main():
     with open("admins.json", "r", encoding="utf-8") as f:
         admin_data = json.load(f)
@@ -103,5 +111,6 @@ def main():
     write_to_json("db/user/users.json", {"commands": valid_commands})
 
 
+# WTF???
 if __name__ == "__main__":
     main()
