@@ -37,7 +37,7 @@ def main():
         print("Usage: python main.py <command> <project_directory> <project_name>")
         print("Available templates:", ", ".join(AVAILABLE_TEMPLATES))
         return 1
-    print(project_name)
+
     if "_" in project_name:
         technology, specifier = project_name.split("_")
     else:

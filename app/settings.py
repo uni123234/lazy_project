@@ -29,8 +29,8 @@ def create_project_files(project_dir, project_name, project_tree):
             if children:
                 create_project_files(project_path, item_name, children)
         else:
-            content = item.get("content")  
-            if content is not None:  
+            content = item.get("content")
+            if content is not None:
                 with open(item_path, "w", encoding="utf-8") as file:
                     file.write(content)
             else:
@@ -39,7 +39,6 @@ def create_project_files(project_dir, project_name, project_tree):
     print(
         f"Project '{project_name}' created successfully in directory '{project_dir}'!"
     )
-
 
 
 def get_admin_data(technology):
