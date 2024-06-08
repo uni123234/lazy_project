@@ -22,7 +22,7 @@ def main():
     Entry point for project management commands.
     """
     if len(sys.argv) < 4:
-        print("Usage: python manage.py <command> <project_directory> <project_name>")
+        print("Usage: python main.py <command> <project_directory> <project_name>")
         print("Available commands:", ", ".join(AVAILABLE_COMMANDS))
         return 1
 
@@ -30,7 +30,7 @@ def main():
     if not os.path.isdir(project_dir):
         raise NotImplementedError(f"Project directory '{project_dir}' does not exist.")
     if command not in AVAILABLE_COMMANDS:
-        print("Usage: python manage.py <command> <project_directory> <project_name>")
+        print("Usage: python main.py <command> <project_directory> <project_name>")
         print("Available commands:", ", ".join(AVAILABLE_COMMANDS))
         return 1
 
