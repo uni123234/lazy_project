@@ -1,96 +1,62 @@
-import json
+from enum import StrEnum
 import os
+import sys
+import json
+from .admin.deploy_adm import create_project_files, get_admin_data
 
 
-def write_to_json(file_path, data):
-    """
-    Function to write data to a JSON file.
-
-    Args:
-        file_path (str): Path to the JSON file.
-        data (dict): Data to write.
-
-    Returns:
-        None.
-    """
-    with open(file_path, "w", encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False, indent=4)
+class TemplateCommands(StrEnum):
+    # TEMPLATE COMMANDS
+    FASTAPI: str = "fastapi_quick"
+    AIOGRAM: str = "aiogram_quick"
+    FLASK: str = "flask_quick"
 
 
-def get_admin_data(technology):
-    """
-    Get admin data for a specific technology.
-
-    Args:
-        technology (str): The technology for which to retrieve admin data.
-
-    Returns:
-        dict: Admin data for the specified technology.
-    """
-    with open("db/admin/admins.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
-        admins = data.get("projects", [])
-        for admin in admins:
-            if admin["technology"] == technology:
-                return admin
-        return None
+class Root(StrEnum):
+    serialize: str = "serialize_template"
+    update: str = "update_template"
+    delete: str = "delete_template"
+    deserialize: str = "deserialize_template"
 
 
-def create_project_files(project_dir, project_name, admin_data):
-    """
-    Creates the necessary project files based on the specified technology in the project directory.
+AVAILABLE_TEMPLATES = list(TemplateCommands.__members__.values())
+AVAILABLE_COMMANDS = list(Root.__members__.values())
 
-    Args:
-        project_dir (str): The absolute path to the project directory.
-        project_name (str): The name of the project to create.
-        admin_data (dict): Dictionary containing admin data for the technology.
-
-    Returns:
-        None.
-    """
-    # Create project directory
-    project_path = os.path.join(project_dir, project_name)
-    os.makedirs(project_path, exist_ok=True)
-
-    tech = admin_data["technology"]
-    tech_path = os.path.join(project_path, tech)
-    os.makedirs(tech_path, exist_ok=True)
-
-    for file_info in admin_data["project_tree"]:
-        if file_info.get("children"):
-            create_nested_files(tech_path, file_info)
-        else:
-            file_name = file_info["name"]
-            file_content = file_info.get("content", "")
-            file_path = os.path.join(tech_path, file_name)
-            with open(file_path, "w", encoding="utf-8") as file:
-                file.write(file_content)
-
-    print(
-        f"Project '{project_name}' created successfully in directory '{project_dir}'!"
-    )
+TEMPLATES_FILE_PATH = "db/admin/templates.json"
 
 
-def create_nested_files(parent_path, file_info):
-    """
-    Creates nested files and directories recursively.
+def read_from_json(file_path):
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as file:
+            return json.load(file)
+    return {"projects": []}
 
-    Args:
-        parent_path (str): The absolute path to the parent directory.
-        file_info (dict): Information about the file or directory.
 
-    Returns:
-        None.
-    """
-    if file_info.get("children"):
-        dir_name = file_info["name"]
-        dir_path = os.path.join(parent_path, dir_name)
-        os.makedirs(dir_path, exist_ok=True)
-        for child_info in file_info["children"]:
-            create_nested_files(dir_path, child_info)
+def main():
+    if len(sys.argv) < 4:
+        print("Usage: python main.py <command> <project_directory> <project_name>")
+        print("Available commands:", ", ".join(AVAILABLE_COMMANDS))
+        print("Available templates:", ", ".join(AVAILABLE_TEMPLATES))
+        return 1
+
+    _root, command, project_dir, project_name, *c = sys.argv
+    if not os.path.isdir(project_dir):
+        raise NotImplementedError(f"Project directory '{project_dir}' does not exist.")
+    if command not in AVAILABLE_TEMPLATES:
+        print("Available commands:", ",".join(AVAILABLE_COMMANDS))
+        print("Usage: python main.py <command> <project_directory> <templates_name>")
+        print("Available templates:", ", ".join(AVAILABLE_TEMPLATES))
+        return 1
+
+    technology, specifier = project_name.split("_")
+
+    admin_data = get_admin_data(technology)
+    if admin_data:
+        create_project_files(project_dir, project_name, admin_data)
     else:
-        file_name = file_info["name"]
-        file_content = file_info.get("content", "")
-        file_path = os.path.join(parent_path, file_name)
-        with open(file_path, "w", encoding="utf-8") as file:
-            file.write(file_content)
+        print(f"Error: Admin data not found for {technology}.")
+        return 1
+
+
+if __name__ == "__main__":
+    exit(main())

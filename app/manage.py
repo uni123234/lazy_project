@@ -1,10 +1,8 @@
-from enum import StrEnum
 import os
 import sys
-from .admin.deploy_adm import (
-    create_project_files,
-    get_admin_data,
-)
+import json
+from .admin.deploy_adm import create_project_files, get_admin_data
+from .settings import TEMPLATES_FILE_PATH, read_from_json
 
 
 class TemplateCommands(StrEnum):
@@ -14,24 +12,31 @@ class TemplateCommands(StrEnum):
     FLASK: str = "flask_quick"
 
 
-AVAILABLE_COMMANDS = list(TemplateCommands.__members__.values())
+class Root(StrEnum):
+    serialize: str = "serialize_template"
+    update: str = "update_template"
+    delete: str = "delete_template"
+    deserialize: str = "deserialize_template"
+
+
+AVAILABLE_TEMPLATES = list(TemplateCommands.__members__.values())
+AVAILABLE_COMMANDS = list(Root.__members__.values())
 
 
 def main():
-    """
-    Entry point for project management commands.
-    """
     if len(sys.argv) < 4:
         print("Usage: python main.py <command> <project_directory> <project_name>")
         print("Available commands:", ", ".join(AVAILABLE_COMMANDS))
+        print("Available templates:", ", ".join(AVAILABLE_TEMPLATES))
         return 1
 
     _root, command, project_dir, project_name, *c = sys.argv
     if not os.path.isdir(project_dir):
         raise NotImplementedError(f"Project directory '{project_dir}' does not exist.")
-    if command not in AVAILABLE_COMMANDS:
-        print("Usage: python main.py <command> <project_directory> <project_name>")
-        print("Available commands:", ", ".join(AVAILABLE_COMMANDS))
+    if command not in AVAILABLE_TEMPLATES:
+        print("Available commands:", ",".join(AVAILABLE_COMMANDS))
+        print("Usage: python main.py <command> <project_directory> <templates_name>")
+        print("Available templates:", ", ".join(AVAILABLE_TEMPLATES))
         return 1
 
     technology, specifier = project_name.split("_")
