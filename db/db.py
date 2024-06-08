@@ -1,16 +1,29 @@
 import os
 import json
+import sys
+
+from app.settings import UsageError, AVAILABLE_COMMANDS
 
 
-# FIXME: DRY
+def parse_project_name(project_name):
+    """Parse the project name to extract technology and specifier."""
+    if "_" in project_name:
+        technology, specifier = project_name.split("_")
+    else:
+        technology = project_name
+        specifier = None
+    return technology, specifier
+
+
 def write_to_json(file_path, data):
+    """Write data to a JSON file."""
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
-# FIXME: DRY
 def get_admin_data(technology):
-    with open("admins.json", "r", encoding="utf-8") as f:
+    """Get administrative data for a given technology."""
+    with open("db/admin/admins.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         projects = data.get("projects", [])
         for project in projects:
@@ -19,8 +32,15 @@ def get_admin_data(technology):
         return None
 
 
-# FIXME: DRY
+def read_from_json(file_path):
+    """Read data from a JSON file."""
+    with open(file_path, "r", encoding="utf-8") as file:
+        data = json.load(file)
+    return data
+
+
 def create_project_files(project_dir, project_name, admin_data):
+    """Create project files based on administrative data."""
     project_path = os.path.join(project_dir, project_name)
     os.makedirs(project_path, exist_ok=True)
 
@@ -38,9 +58,8 @@ def create_project_files(project_dir, project_name, admin_data):
     )
 
 
-# FIXME: What does it returns?
-# BUG: Prints must be only inside main fugging function
 def add_code_file(project_dir, technology, file_name, content):
+    """Add a code file to the specified project."""
     tech_path = os.path.join(project_dir, technology)
     os.makedirs(tech_path, exist_ok=True)
 
@@ -48,69 +67,60 @@ def add_code_file(project_dir, technology, file_name, content):
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(content)
 
-    print(f"Code file '{file_name}' added successfully in '{technology}' project.")
+    return print(
+        f"Code file '{file_name}' added successfully in '{technology}' project."
+    )
 
 
 def remove_code_file(project_dir, technology, file_name):
+    """Remove a code file from the specified project."""
     file_path = os.path.join(project_dir, technology, file_name)
 
     if os.path.exists(file_path):
         os.remove(file_path)
-        print(
+        return print(
             f"Code file '{file_name}' removed successfully from '{technology}' project."
         )
     else:
-        print(f"Error: Code file '{file_name}' not found in '{technology}' project.")
+        return print(
+            f"Error: Code file '{file_name}' not found in '{technology}' project."
+        )
 
 
 def edit_code_file(project_dir, technology, file_name, new_content):
+    """Edit a code file in the specified project."""
     file_path = os.path.join(project_dir, technology, file_name)
 
     if os.path.exists(file_path):
         with open(file_path, "w", encoding="utf-8") as file:
             file.write(new_content)
-        print(f"Code file '{file_name}' edited successfully in '{technology}' project.")
+        return print(
+            f"Code file '{file_name}' edited successfully in '{technology}' project."
+        )
     else:
-        print(f"Error: Code file '{file_name}' not found in '{technology}' project.")
+        return print(
+            f"Error: Code file '{file_name}' not found in '{technology}' project."
+        )
 
 
-# FIXME: MEDAITOR ALERT!!!
 def create_and_run_project(technology, project_dir, project_name):
+    """Create and run a project based on technology and project name."""
     project_data = get_admin_data(technology)
     if project_data:
-        create_project_files(project_dir, project_name, project_data)
+        create_project_files(project_dir, project_name, admin_data["project_tree"])
 
 
-# FIXME: MEDAITOR ALERT!!!
-def validate_commands(commands, valid_technologies):
-    valid_commands = [
-        cmd for cmd in commands if cmd.split("_")[0] in valid_technologies
-    ]
-    return valid_commands
+def validate_arguments():
+    """Validate the command-line arguments."""
+    if len(sys.argv) < 4:
+        raise UsageError()
 
+    command, project_dir, project_name = sys.argv[1:4]
 
-# FIXME: second main??? Use tests or checkings
-def main():
-    with open("admins.json", "r", encoding="utf-8") as f:
-        admin_data = json.load(f)
-        valid_technologies = [
-            project["technology"] for project in admin_data["projects"]
-        ]
+    if not os.path.isdir(project_dir):
+        raise DirectoryError(project_dir)
 
-    with open("db/user/users.json", "r", encoding="utf-8") as f:
-        user_data = json.load(f)
-        user_commands = user_data.get("commands", [])
+    if command not in AVAILABLE_COMMANDS:
+        raise CommandError(command)
 
-    valid_commands = validate_commands(user_commands, valid_technologies)
-
-    for cmd in valid_commands:
-        tech = cmd.split("_")[0]
-        create_and_run_project(tech, f"{tech}_project_dir", f"{tech}_project")
-
-    # Write valid commands back to users.json
-    write_to_json("db/user/users.json", {"commands": valid_commands})
-
-
-# WTF???
-if __name__ == "__main__":
-    main()
+    return command, project_dir, project_name
