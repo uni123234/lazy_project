@@ -1,4 +1,18 @@
-import os
+"""
+This script manages project creation.
+
+It validates command-line arguments, parses the project name to determine technology,
+retrieves administrative data, and creates project files based on that data.
+
+Imports:
+- validate_arguments, parse_project_name, get_admin_data: Functions for handling command-line arguments and retrieving admin data.
+- create_project_files_two: Function for creating project files based on administrative data.
+- ProjectError, AdminDataError: Custom exceptions for handling specific errors.
+
+Usage:
+- Run the script directly to execute the main function.
+"""
+
 import sys
 
 # Importing functions from custom modules
@@ -26,10 +40,10 @@ def main():
     """
     try:
         # Validate command-line arguments
-        command, project_dir, project_name = validate_arguments()
+        _, project_dir, project_name = validate_arguments()
 
         # Parse project name to extract technology and specifier
-        technology, specifier = parse_project_name(project_name)
+        technology, _ = parse_project_name(project_name)
 
         # Get administrative data for the specified technology
         admin_data = get_admin_data(technology)

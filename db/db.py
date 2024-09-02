@@ -1,8 +1,29 @@
+"""
+This module contains utility functions for managing project files and handling
+command-line arguments.
+
+Functions:
+- parse_project_name: Extracts technology and specifier from the project name.
+- write_to_json: Writes data to a JSON file.
+- get_admin_data: Retrieves administrative data for a given technology.
+- read_from_json: Reads data from a JSON file.
+- create_project_files: Creates project files based on administrative data.
+- add_code_file: Adds a new code file to the specified project.
+- remove_code_file: Removes a code file from the specified project.
+- edit_code_file: Edits a code file in the specified project.
+- create_and_run_project: Creates and runs a project based on technology and name.
+- validate_arguments: Validates command-line arguments.
+
+Exceptions:
+- DirectoryError: Raised when a directory does not exist.
+- CommandError: Raised when an invalid command is encountered.
+"""
+
 import os
 import json
 import sys
 
-from app.settings import UsageError, AVAILABLE_COMMANDS
+from app.settings import CommandError, DirectoryError, UsageError, AVAILABLE_COMMANDS
 
 
 def parse_project_name(project_name):
@@ -107,7 +128,8 @@ def create_and_run_project(technology, project_dir, project_name):
     """Create and run a project based on technology and project name."""
     project_data = get_admin_data(technology)
     if project_data:
-        create_project_files(project_dir, project_name, admin_data["project_tree"])
+        create_project_files(project_dir, project_name, project_data["project_tree"])
+
 
 
 def validate_arguments():

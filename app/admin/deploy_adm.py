@@ -1,7 +1,18 @@
-import os
-import json
+"""
+This module provides functions to create project files and directories.
 
-from db.db import write_to_json, get_admin_data
+Functions:
+- create_project_files: Creates project files and directories based on administrative data.
+- create_nested_files: Recursively creates nested files and directories.
+- create_project_files_two: Creates project files based on a tree structure.
+
+Imports:
+- os: For interacting with the operating system, including file and directory operations.
+"""
+
+
+import os
+
 
 def create_project_files(project_dir, project_name, admin_data):
     """
@@ -54,8 +65,11 @@ def create_project_files(project_dir, project_name, admin_data):
                 file.write(file_content)
 
     # Print success message
-    print(f"Project '{project_name}' created successfully in directory '{project_dir}'!")
+    print(
+        f"Project '{project_name}' created successfully in directory '{project_dir}'!"
+    )
     return
+
 
 def create_nested_files(parent_path, file_info):
     """
@@ -66,7 +80,8 @@ def create_nested_files(parent_path, file_info):
         file_info (dict): Information about the file or directory to be created.
     """
     if file_info.get("children"):
-        # If file_info contains children, create a directory and recursively create nested files and directories
+        # If file_info contains children, create a directory and
+        # recursively create nested files and directories
         dir_name = file_info["name"]
         dir_path = os.path.join(parent_path, dir_name)
         os.makedirs(dir_path, exist_ok=True)
@@ -83,6 +98,7 @@ def create_nested_files(parent_path, file_info):
             file.write(file_content)
     return None
 
+
 def create_project_files_two(project_dir, project_name, project_tree):
     """
     Create project files based on project tree structure.
@@ -90,7 +106,8 @@ def create_project_files_two(project_dir, project_name, project_tree):
     Args:
         project_dir (str): The directory where the project will be created.
         project_name (str): The name of the project.
-        project_tree (list): The structure of the project containing information about files and directories.
+        project_tree (list): The structure of the project 
+        containing information about files and directories.
     """
     # Create the main project directory
     project_path = os.path.join(project_dir, project_name)
@@ -108,7 +125,7 @@ def create_project_files_two(project_dir, project_name, project_tree):
                 # Create a dictionary to pass as admin_data
                 admin_data = {
                     "technology": "default_tech",  # Or some other default value
-                    "project_tree": children
+                    "project_tree": children,
                 }
                 create_project_files(project_path, item_name, admin_data)
         else:
@@ -120,5 +137,7 @@ def create_project_files_two(project_dir, project_name, project_tree):
                 file.write(content)
 
     # Print success message
-    print(f"Project '{project_name}' created successfully in directory '{project_dir}'!")
+    print(
+        f"Project '{project_name}' created successfully in directory '{project_dir}'!"
+    )
     return
