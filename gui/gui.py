@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import (
     QSpacerItem,
     QSizePolicy,
     QLineEdit,
+    QAction,
 )
 from PyQt5.QtCore import Qt, QPoint
 from .utils import TemplateManager
@@ -26,6 +27,7 @@ class LazyProjectGUI(QMainWindow):
     """
     Main window class for the Lazy Project GUI application.
     """
+
     def __init__(self):
         """
         Initializes the LazyProjectGUI window, sets up the template manager, and
@@ -45,54 +47,28 @@ class LazyProjectGUI(QMainWindow):
         """
         self.setWindowTitle("Lazy Project GUI")
         self.setGeometry(100, 100, 800, 600)
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
 
-        main_layout = QVBoxLayout()
+        # Creating the menu bar
+        menubar = self.menuBar()
 
-        title_bar_layout = QHBoxLayout()
-        title_bar_layout.setContentsMargins(0, 0, 0, 0)
-        title_bar_layout.setSpacing(5)
+        # File menu
+        file_menu = menubar.addMenu("File")
 
-        title_bar_widget = QWidget(self)
-        title_bar_widget.setObjectName("title_bar_widget")
-        title_bar_widget.setFixedHeight(40)
-        title_bar_widget.setLayout(title_bar_layout)
+        # View menu
+        view_menu = menubar.addMenu("View")
 
-        title_label = QLabel("Lazy Project GUI", self)
-        title_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        title_bar_layout.addWidget(title_label)
+        # Adding a theme toggle option in the View menu
+        theme_action = QAction("Toggle Theme", self)
+        theme_action.triggered.connect(self.toggle_theme)
+        view_menu.addAction(theme_action)
 
-        # Help button
-        self.help_button = QPushButton("?", self)
-        self.help_button.setObjectName("help_button")
-        self.help_button.setFixedSize(30, 30)
-        self.help_button.clicked.connect(self.show_help)
-        title_bar_layout.addWidget(self.help_button)
+        # Help menu
+        help_menu = menubar.addMenu("Help")
 
-        # Theme toggle button
-        self.theme_toggle_button = QPushButton("🌕", self)
-        self.theme_toggle_button.setObjectName("theme_toggle_button")
-        self.theme_toggle_button.setFixedSize(30, 30)
-        self.theme_toggle_button.clicked.connect(self.toggle_theme)
-        title_bar_layout.addWidget(self.theme_toggle_button)
-
-        self.minimize_button = QPushButton("_", self)
-        self.minimize_button.setObjectName("minimize_button")
-        self.minimize_button.setFixedSize(30, 30)
-        self.minimize_button.clicked.connect(self.showMinimized)
-        title_bar_layout.addWidget(self.minimize_button)
-
-        self.maximize_button = QPushButton("⬜", self)
-        self.maximize_button.setObjectName("maximize_button")
-        self.maximize_button.setFixedSize(30, 30)
-        self.maximize_button.clicked.connect(self.toggle_maximize)
-        title_bar_layout.addWidget(self.maximize_button)
-
-        self.close_button = QPushButton("X", self)
-        self.close_button.setObjectName("close_button")
-        self.close_button.setFixedSize(30, 30)
-        self.close_button.clicked.connect(self.close)
-        title_bar_layout.addWidget(self.close_button)
+        # Adding a help option in the Help menu
+        help_action = QAction("Help", self)
+        help_action.triggered.connect(self.show_help)
+        help_menu.addAction(help_action)
 
         content_layout = QVBoxLayout()
         content_layout.setContentsMargins(10, 10, 10, 10)
@@ -138,7 +114,7 @@ class LazyProjectGUI(QMainWindow):
         container = QWidget()
         container.setLayout(content_layout)
 
-        main_layout.addWidget(title_bar_widget)
+        main_layout = QVBoxLayout()
         main_layout.addWidget(container)
 
         central_widget = QWidget(self)
@@ -154,7 +130,6 @@ class LazyProjectGUI(QMainWindow):
         Toggles between dark and light themes, and updates the UI accordingly.
         """
         self.is_dark_mode = not self.is_dark_mode
-        self.theme_toggle_button.setText("🌑" if self.is_dark_mode else "🌕")
         self.apply_theme()
 
     def apply_theme(self):
@@ -164,27 +139,14 @@ class LazyProjectGUI(QMainWindow):
         theme_file = "dark_theme.css" if self.is_dark_mode else "light_theme.css"
         self.load_style(theme_file)
 
-    def toggle_maximize(self):
-        """
-        Toggles the window between maximized and normal states.
-        """
-        if self.isMaximized():
-            self.showNormal()
-            self.maximize_button.setText("⬜")
-        else:
-            self.showMaximized()
-            self.maximize_button.setText("❐")
-
     def toggle_fullscreen(self):
         """
         Toggles the window between fullscreen and normal modes.
         """
         if self.is_fullscreen:
             self.showNormal()
-            self.fullscreen_button.setText("Fullscreen")
         else:
             self.showFullScreen()
-            self.fullscreen_button.setText("Exit Fullscreen")
         self.is_fullscreen = not self.is_fullscreen
 
     def load_json_data(self):
@@ -277,7 +239,7 @@ class LazyProjectGUI(QMainWindow):
         """
         try:
             style_path = "gui/resources/" + style_file
-            with open(style_path, "r", encoding='utf-8') as file:
+            with open(style_path, "r", encoding="utf-8") as file:
                 style = file.read()
                 self.setStyleSheet(style)
         except FileNotFoundError:
@@ -302,7 +264,7 @@ class LazyProjectGUI(QMainWindow):
         help_dialog.setLayout(help_layout)
         help_dialog.exec_()
 
-    def mouse_press_event(self, event):
+    def mousePressEvent(self, event):
         """
         Handles mouse press events to enable window dragging.
 
@@ -313,7 +275,7 @@ class LazyProjectGUI(QMainWindow):
             self.is_moving = True
             self.offset = event.pos()
 
-    def mouse_move_event(self, event):
+    def mouseMoveEvent(self, event):
         """
         Handles mouse move events to update the window position during dragging.
 
@@ -323,7 +285,7 @@ class LazyProjectGUI(QMainWindow):
         if self.is_moving:
             self.move(event.globalPos() - self.offset)
 
-    def mouse_release_event(self, event):
+    def mouseReleaseEvent(self, event):
         """
         Handles mouse release events to stop window dragging.
 
