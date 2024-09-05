@@ -14,4 +14,7 @@ Classes:
 
 from .utils import build_tree, build_project_structure
 from .template_manager import TemplateManager
-
+from .json_serializer import JsonSerializer
+from .menu_manager import MenuManager
+from .them_manager import ThemeManager
+from .search_manager import SearchManager
