@@ -46,7 +46,9 @@ class TemplateManager:
             except (AdminDataError, DirectoryError, ProjectError) as e:
                 return None, f"Error creating project structure: {str(e)}"
             except (IOError, json.JSONDecodeError) as e:
-                return f"Error handling file or JSON: {str(e)}"
+                return None, f"Error handling file or JSON: {str(e)}"
+        return None, "No directory selected"
+
 
 
     def update_template(self, json_text):

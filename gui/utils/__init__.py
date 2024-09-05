@@ -18,3 +18,4 @@ from .json_serializer import JsonSerializer
 from .menu_manager import MenuManager
 from .them_manager import ThemeManager
 from .search_manager import SearchManager
+from .help_manager import HelpManager
